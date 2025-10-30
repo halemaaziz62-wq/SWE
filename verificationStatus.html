@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verification Status</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 360px;
+      text-align: center;
+    }
+    h1 {
+      color: #1565c0;
+    }
+    .status {
+      font-size: 1.4em;
+      margin: 20px 0;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .pending { background-color: #fff3cd; color: #856404; }
+    .approved { background-color: #d4edda; color: #155724; }
+    .rejected { background-color: #f8d7da; color: #721c24; }
+    .button {
+      display: inline-block;
+      background-color: #1565c0;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    .button:hover { background-color: #0d47a1; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Verification Status</h1>
+    <div id="status" class="status">Loading...</div>
+    <p id="message"></p>
+    <a id="goToDriver" href="#" class="button">Go to Dashboard</a>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status") || "pending";
+    const role = params.get("role") || "student";
+    const statusEl = document.getElementById("status");
+    const messageEl = document.getElementById("message");
+    const button = document.getElementById("goToDriver");
+
+    if (status === "approved") {
+      statusEl.textContent = "Approved";
+      statusEl.className = "status approved";
+      messageEl.textContent = "Your account has been successfully verified.";
+    } else if (status === "rejected") {
+      statusEl.textContent = "Rejected";
+      statusEl.className = "status rejected";
+      messageEl.textContent = "Unfortunately, your verification was rejected.";
+    } else {
+      statusEl.textContent = "Pending";
+      statusEl.className = "status pending";
+      messageEl.textContent = "Your verification is currently under review.";
+    }
+
+    button.addEventListener("click", () => {
+      window.location.href = `${role}-dashboard.html?status=${status}`;
+    });
+  </script>
+</body>
+</html>

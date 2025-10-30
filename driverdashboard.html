@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e1f2ff, #f9fbff);
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #052345;
+      color: rgba(255, 255, 255, 0.795);
+      padding: 15px 25px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 700px;
+      background-color: white;
+      margin: 40px auto;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #052345;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-section {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #cfd8dc;
+      border-radius: 8px;
+      background-color: #fafafa;
+    }
+
+    .file-note {
+      font-size: 0.85em;
+      color: #777;
+      margin-top: 5px;
+    }
+
+    button {
+      background-color: #052345;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      display: block;
+      width: 100%;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    .status-box {
+      background-color: #c2e6ff;
+      border-left: 5px solid #0d47a1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      color: #0d47a1;
+      font-weight: 500;
+    }
+
+    .success {
+      background-color: #d4edda;
+      border-left-color: #155724;
+      color: #155724;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      border-left-color: #721c24;
+      color: #721c24;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Please ensure your documents are clear and accurate to speed up the verification process</h1>
+  </header>
+
+  <main>
+    <div class="status-box" id="statusMessage">
+      upload your license and vehicle documents
+    </div>
+
+    <form id="uploadForm">
+      <div class="form-section">
+        <label for="licenseFile">Driver License</label>
+        <input type="file" id="licenseFile" accept=".pdf,.jpg,.jpeg,.png" required />
+
+      </div>
+
+      <div class="form-section">
+        <label for="vehicleFile">Vehicle Registration Document</label>
+        <input type="file" id="vehicleFile" accept=".pdf,.jpg,.jpeg,.png" required />
+
+      </div>
+
+      <button type="submit">Submit for Verification</button>
+
+
+    </form>
+  </main>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const licenseFile = document.getElementById("licenseFile").files[0];
+      const vehicleFile = document.getElementById("vehicleFile").files[0];
+      const statusMessage = document.getElementById("statusMessage");
+
+      // file validation
+      if (!licenseFile || !vehicleFile) {
+        statusMessage.textContent = "Please select both files.";
+        statusMessage.className = "status-box error";
+        return;
+      }
+
+      const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+      if (!allowedTypes.includes(licenseFile.type) || !allowedTypes.includes(vehicleFile.type)) {
+        statusMessage.textContent = "Invalid file type. Only PDF, JPG, or PNG allowed.";
+        statusMessage.className = "status-box error";
+        return;
+      }
+
+      const maxSize = 5 * 1024 * 1024; // 5 MB
+      if (licenseFile.size > maxSize || vehicleFile.size > maxSize) {
+        statusMessage.textContent = "File size too large (max 5MB).";
+        statusMessage.className = "status-box error";
+        return;
+      }
+
+      // Simulate successful upload
+      statusMessage.textContent = "Documents uploaded successfully! Redirecting...";
+      statusMessage.className = "status-box success";
+
+      setTimeout(() => {
+        // Redirect to verification status page
+        window.location.href = "verificationStatus.html?role=driver&status=pending";
+      }, 1500);
+    });
+  </script>
+</body>
+
+</html>

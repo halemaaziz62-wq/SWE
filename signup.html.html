@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Login </title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #f9fbff);
+      height: 99vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loginContainer {
+      background: rgb(196, 224, 238);
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #03254b;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-size: 0.9em;
+      color: #555;
+      margin-bottom: 6px;
+      margin-top: 12px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cfd8dc;
+      border-radius: 8px;
+      font-size: 0.95em;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #1565c0;
+      box-shadow: 0 0 0 2px #bbdefb;
+    }
+
+
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    .note {
+      font-size: 0.85em;
+      color: #777;
+      margin-top: 15px;
+    }
+
+    button {
+      width: 90%;
+
+      color: rgba(255, 255, 255, 0.89);
+      background-color: #052345;
+
+
+      padding: 12px;
+      border: none;
+
+
+      border-radius: 8px;
+      margin-top: 20px;
+
+
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="loginContainer">
+    <h2> Log in to start your safe and comfortable ride at Imam University! </h2>
+    <form id="loginForm">
+      <label for="choose">Select </label>
+      <select id="choose" required>
+
+        <option value="student">Student</option>
+        <option value="driver">Driver</option>
+      </select>
+
+      <label for="description">University Email or ID</label>
+      <input type="text" id="identifier" placeholder="e.g.  studentID@imamu.edu or 441234567" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required />
+
+      <button type="click">Login</button>
+      <p class="note">Use your university email or university ID to sign in.</p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("click", function (e) {
+      e.preventDefault();
+
+      const identifier = document.getElementById("description").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+
+
+      // تحقق  للبريد الجامعي أو الهوية
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@university\.edu$/;
+      const idPattern = /^[0-9]{9}$/;
+
+      if (!emailPattern.test(identifier) && !idPattern.test(identifier)) {
+        alert("Please enter a valid university email or ID.");
+        return;
+      }
+
+      if (role === "driver") {
+        window.location.href = "driverdashboard.html";
+      } else if (role === "student") {
+        window.location.href = "studentdashboard.html"; // اضيفه sprint 2
+      }
+    });
+
+  </script>
+</body>
+
+</html>

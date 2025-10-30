@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello Student! Set your ride preferences and find available rides instantly</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e7f4ff, #ffffff);
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #052345;
+      color: rgba(255, 255, 255, 0.849);
+      padding: 15px 25px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background-color: rgb(223, 237, 254);
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #052345;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #cfd8dc;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #052345;
+      box-shadow: 0 0 0 2px #bbdefb;
+    }
+
+    button {
+      width: 100%;
+      background-color: #052345;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #052345;
+    }
+
+    .ride-list {
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #cfd8dc;
+      border-radius: 8px;
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
+
+    .ride-item {
+      padding: 8px;
+      border-bottom: 1px solid #cfd8dc;
+    }
+
+    .ride-item:last-child {
+      border-bottom: none;
+    }
+
+    .note {
+      font-size: 0.85em;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <main>
+    <!-- Ride Sharing Preferences -->
+    <div class="section">
+      <h2>Ride Sharing Preferences</h2>
+      <label for="genderPref">Preferred Gender:</label>
+      <select id="genderPref">
+        <option value="">No preference</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+
+      <label>
+        <input type="checkbox" id="friendsOnly">
+        Ride only with mutual friends
+      </label>
+    </div>
+
+    <!-- Instant Ride Request -->
+    <div class="section">
+      <h2>Request Instant Ride</h2>
+      <button id="requestRideBtn">Request Ride Now</button>
+      \
+      <div class="ride-list" id="rideList">
+
+      </div>
+    </div>
+
+    <!-- Search Rides by Location -->
+    <div class="section">
+      <h2>Search Rides by Location</h2>
+      <label for="pickupLocation">Pickup Location:</label>
+      <input type="text" id="pickupLocation" placeholder="Enter your pickup location">
+
+      <label for="destination">Destination:</label>
+      <input type="text" id="destination" placeholder="Enter your destination">
+
+      <button id="searchRidesBtn">Search Rides</button>
+      <div class="ride-list" id="searchResults"></div>
+    </div>
+  </main>
+
+  <script>
+    // Instant Ride Request simulation
+    const requestBtn = document.getElementById("requestRideBtn");
+    const rideList = document.getElementById("rideList");
+
+    requestBtn.addEventListener("click", () => {
+      rideList.innerHTML = "";
+      const rides = [
+        "Driver: Ahmed - Car: Toyota Camry",
+        "Driver: Sara - Car: Honda Civic",
+        "Driver: Khalid - Car: Hyundai Elantra"
+      ];
+
+      rides.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "ride-item";
+        div.textContent = r;
+        rideList.appendChild(div);
+      });
+    });
+
+    // Search Rides by Location simulation
+    const searchBtn = document.getElementById("searchRidesBtn");
+    const searchResults = document.getElementById("searchResults");
+
+    searchBtn.addEventListener("click", () => {
+      const pickup = document.getElementById("pickupLocation").value.trim();
+      const dest = document.getElementById("destination").value.trim();
+      searchResults.innerHTML = "";
+
+      if (!pickup || !dest) {
+        searchResults.innerHTML = "<div class='ride-item'>Please enter both locations.</div>";
+        return;
+      }
+
+      const results = [
+        `Driver: Ahmed - From ${pickup} to ${dest} - Car: Toyota Camry`,
+        `Driver: Sara - From ${pickup} to ${dest} - Car: Honda Civic`
+      ];
+
+      results.forEach(r => {
+        const div = document.createElement("div");
+        div.className = "ride-item";
+        div.textContent = r;
+        searchResults.appendChild(div);
+      });
+    });
+  </script>
+</body>
+
+</html>
