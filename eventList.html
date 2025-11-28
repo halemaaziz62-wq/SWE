@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events List — Imam University</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin:0; background-color:#f4f7fb; color:#111;
+  }
+  header {
+    background-color:#0b2545; color:white;
+    padding:14px 20px; text-align:center;
+  }
+  header h1 { margin:0; font-size:1.3rem; }
+  main { max-width:700px; margin:20px auto; }
+  .card { background:#fff; padding:18px; border-radius:12px; box-shadow:0 6px 18px rgba(11,37,69,0.06); margin-bottom:20px; }
+  table { width:100%; border-collapse:collapse; margin-top:12px; }
+  th, td { text-align:left; padding:10px; border-bottom:1px solid #e6edf6; }
+  th { background:#f1f6fb; color:#0b2545; }
+  button { padding:6px 10px; border:0; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:600; }
+  .editBtn { background:#1366d6; color:white; }
+  .delBtn { background:#e63946; color:white; }
+  .status { margin-top:12px; padding:10px; border-radius:8px; font-weight:600; }
+  .status.success { background:#e6f4ea; color:#155724; }
+  .status.error { background:#fdecea; color:#721c24; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Admin — Campus Events List</h1>
+</header>
+
+<main>
+  <div class="card">
+    <h3>Saved Events</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="eventsTableBody"></tbody>
+    </table>
+    <div id="eventStatus" class="status" style="display:none;"></div>
+  </div>
+</main>
+
+<script>
+// Display events
+function displayEvents(){
+  const tbody = document.getElementById('eventsTableBody');
+  tbody.innerHTML = '';
+  const events = JSON.parse(localStorage.getItem('campusEvents') || '[]');
+  events.forEach((ev, index)=>{
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = `
+      <td>${ev.title}</td>
+      <td>${ev.start}</td>
+      <td>${ev.end || '-'}</td>
+      <td>${ev.desc || '-'}</td>
+      <td>
+        <button class="editBtn">Edit</button>
+        <button class="delBtn">Delete</button>
+      </td>
+    `;
+    const editBtn = tr.querySelector('.editBtn');
+    const delBtn = tr.querySelector('.delBtn');
+
+    editBtn.onclick = ()=>{
+      const newTitle = prompt("Edit Title:", ev.title) || ev.title;
+      const newStart = prompt("Edit Start Date & Time:", ev.start) || ev.start;
+      const newEnd = prompt("Edit End Date & Time (optional):", ev.end || '') || ev.end;
+      const newDesc = prompt("Edit Description:", ev.desc || '') || ev.desc;
+      events[index] = {title:newTitle, start:newStart, end:newEnd, desc:newDesc};
+      localStorage.setItem('campusEvents', JSON.stringify(events));
+      showStatus('Event updated successfully', true);
+      displayEvents();
+    };
+
+    delBtn.onclick = ()=>{
+      if(confirm("Are you sure to delete this event?")){
+        events.splice(index,1);
+        localStorage.setItem('campusEvents', JSON.stringify(events));
+        showStatus('Event deleted', true);
+        displayEvents();
+      }
+    };
+
+    tbody.appendChild(tr);
+  });
+}
+
+function showStatus(msg, success=true){
+  const statusEl = document.getElementById('eventStatus');
+  statusEl.style.display='block';
+  statusEl.className = 'status ' + (success?'success':'error');
+  statusEl.textContent = msg;
+  setTimeout(()=>{ statusEl.style.display='none'; }, 3000);
+}
+
+displayEvents();
+</script>
+
+</body>
+</html>
