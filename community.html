@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Community Hub — Imam University Ride</title>
+<style>
+  :root{
+    --navy:#0b2545;
+    --accent:#1366d6;
+    --bg:#f4f7fb;
+    --card:#fff;
+    --muted:#6b7280;
+    --success:#155724;
+    --danger:#721c24;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family: Inter, "Segoe UI", system-ui, Arial; margin:0; background:var(--bg); color:#111;
+  }
+  header{background:var(--navy); color:#fff; padding:14px 18px; display:flex;align-items:center;justify-content:space-between}
+  header h1{margin:0;font-size:1.05rem}
+  main{max-width:1100px;margin:18px auto;padding:0 16px}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 24px rgba(11,37,69,0.06)}
+  h2{margin:0 0 10px 0;color:var(--navy)}
+  label{display:block;font-size:0.9rem;color:var(--muted);margin-top:8px}
+  input, select, textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #e6eefb;margin-top:6px}
+  button{background:var(--navy);color:#fff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer;margin-top:8px}
+  button.secondary{background:#fff;color:var(--navy);border:1px solid #e6eefb}
+  .small{font-size:0.85rem;color:var(--muted)}
+  .list{max-height:260px;overflow:auto;margin-top:8px}
+  .item{padding:8px;border-bottom:1px solid #f1f6fb;display:flex;justify-content:space-between;align-items:center}
+  .inline{display:flex;gap:8px;align-items:center}
+  .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+  .cal-day{padding:8px;background:#fbfcff;border-radius:8px;min-height:64px}
+  .badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#e6f4ea;color:var(--success);font-weight:600;font-size:0.85rem}
+  .status{padding:8px;border-radius:8px;margin-top:8px}
+  .status.ok{background:#e6f4ea;color:var(--success)}
+  .status.err{background:#fdecea;color:var(--danger)}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Imam University — Community Hub</h1>
+    <div class="small">Notifications · Calendar · Reports · Classmates · Groups</div>
+  </div>
+  <div>
+    <button id="requestNotifPerm" class="secondary">Enable Notifications</button>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- LEFT column: main features -->
+    <section>
+      <!-- 1) Trip reminders & calendar -->
+      <div class="card" id="remindersCard">
+        <h2>Trip Reminders & Calendar</h2>
+        <div class="small">Set a reminder for an upcoming trip. The page will schedule in-browser reminders (demo).</div>
+
+        <label>Trip Title</label>
+        <input id="tripTitle" placeholder="e.g., Campus to Library">
+
+        <label>Trip Date & Time</label>
+        <input type="datetime-local" id="tripDate">
+
+        <label>Remind me (minutes before)</label>
+        <select id="remindBefore">
+          <option value="5">5 minutes</option>
+          <option value="10">10 minutes</option>
+          <option value="30">30 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="1440">1 day</option>
+        </select>
+
+        <div style="display:flex;gap:8px">
+          <button id="saveReminderBtn">Save Reminder</button>
+          <button id="showCalendarBtn" class="secondary">Show Calendar</button>
+        </div>
+
+        <div id="reminderStatus" class="status" style="display:none"></div>
+
+        <div style="margin-top:12px">
+          <h3 class="small">Upcoming reminders</h3>
+          <div id="reminderList" class="list"></div>
+        </div>
+      </div>
+
+      <!-- 2) Reporting interface -->
+      <div class="card" id="reportCard" style="margin-top:16px">
+        <h2>Report an Issue</h2>
+        <div class="small">Submit incident/issue (type & location). Admins can view reports in admin page.</div>
+
+        <label>Issue Type</label>
+        <select id="issueType">
+          <option value="safety">Safety</option>
+          <option value="vehicle">Vehicle</option>
+          <option value="driver">Driver behavior</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label>Location</label>
+        <input id="issueLocation" placeholder="e.g., Gate A / Bus stop near mosque">
+
+        <label>Details</label>
+        <textarea id="issueDetails" rows="3" placeholder="Describe the problem"></textarea>
+
+        <div style="display:flex;gap:8px">
+          <button id="submitReportBtn">Submit Report</button>
+          <button id="openReportsBtn" class="secondary">Open Admin Reports</button>
+        </div>
+
+        <div id="reportStatus" class="status" style="display:none"></div>
+      </div>
+
+      <!-- 3) Driver rating -->
+      <div class="card" style="margin-top:16px">
+        <h2>Rate a Driver</h2>
+        <div class="small">Leave star rating and comment. Ratings are stored locally (demo).</div>
+
+        <label>Driver ID</label>
+        <input id="rateDriverId" placeholder="e.g., DRV123">
+
+        <label>Rating (1-5)</label>
+        <select id="rateValue">
+          <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+        </select>
+
+        <label>Comment (optional)</label>
+        <input id="rateComment" placeholder="Good driver, on time">
+
+        <div style="display:flex;gap:8px">
+          <button id="submitRatingBtn">Submit Rating</button>
+          <button id="viewDriverRatingsBtn" class="secondary">View Ratings</button>
+        </div>
+
+        <div id="ratingStatus" class="status" style="display:none"></div>
+      </div>
+
+      <!-- 4) Classmates & same-major groups -->
+      <div class="card" style="margin-top:16px">
+        <h2>Classmates & Major Groups</h2>
+        <div class="small">Add classmates, create/join major groups, send ride requests to classmates.</div>
+
+        <label>Your Student ID</label>
+        <input id="myStudentId" placeholder="e.g., 441234567">
+
+        <label>Classmate ID (to connect)</label>
+        <input id="classmateId" placeholder="e.g., 441234568">
+
+        <div style="display:flex;gap:8px">
+          <button id="addClassmateBtn">Add Classmate</button>
+          <button id="listClassmatesBtn" class="secondary">Show Classmates</button>
+        </div>
+
+        <div style="margin-top:10px">
+          <label>Create / Join Major Group</label>
+          <input id="majorName" placeholder="Major name e.g., Computer Science">
+          <div style="display:flex;gap:8px">
+            <button id="createGroupBtn">Create Group</button>
+            <button id="joinGroupBtn" class="secondary">Join Group</button>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <strong class="small">Quick Actions</strong>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button id="showGroupsBtn" class="secondary">View Groups</button>
+            <button id="showGroupMembersBtn" class="secondary">View Group Members</button>
+          </div>
+        </div>
+
+        <div id="classmateStatus" class="status" style="display:none"></div>
+        <div id="classmateList" class="list" style="margin-top:8px"></div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT column: calendar + admin shortcuts -->
+    <aside>
+      <div class="card">
+        <h2>Calendar View (Month)</h2>
+        <div id="calendarControls" style="display:flex;gap:8px;align-items:center">
+          <button id="prevMonth" class="secondary">◀</button>
+          <div id="calMonth" style="font-weight:700"></div>
+          <button id="nextMonth" class="secondary">▶</button>
+        </div>
+        <div class="calendar" id="calendarGrid" aria-live="polite"></div>
+        <div class="small" style="margin-top:8px">Click a date to see reminders/events.</div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h2>Admin Shortcuts</h2>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button id="openReportsAdmin" class="secondary">Open Reports (Admin)</button>
+          <button id="openGroupsAdmin" class="secondary">Manage Groups (Admin)</button>
+          <button id="openRatingsAdmin" class="secondary">Driver Ratings (Admin)</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h2>Status</h2>
+        <div id="notifStatus" class="small">Notifications: <span id="notifPerm">unknown</span></div>
+        <div id="nextAlarm" style="margin-top:8px" class="small"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+/* ======================================================
+  Community Hub — demo features implemented via localStorage
+  Note: This is a front-end demo. For production connect to backend.
+====================================================== */
+
+const LS = {
+  reminders: 'cu_reminders',
+  reports: 'cu_reports',
+  ratings: 'cu_ratings',
+  classmates: 'cu_classmates',
+  groups: 'cu_groups'
+};
+
+/* ---------------------------
+   Notifications permission
+   --------------------------- */
+const notifPermEl = document.getElementById('notifPerm');
+document.getElementById('requestNotifPerm').addEventListener('click', async ()=>{
+  if(!('Notification' in window)){
+    alert('Browser notifications not supported.');
+    return;
+  }
+  const p = await Notification.requestPermission();
+  notifPermEl.textContent = p;
+});
+notifPermEl.textContent = Notification && Notification.permission ? Notification.permission : 'unsupported';
+
+/* ---------------------------
+   Reminders (save + schedule)
+   --------------------------- */
+function loadReminders(){ return JSON.parse(localStorage.getItem(LS.reminders) || '[]'); }
+function saveReminders(arr){ localStorage.setItem(LS.reminders, JSON.stringify(arr)); renderReminders(); scheduleNextReminder(); }
+
+function renderReminders(){
+  const list = document.getElementById('reminderList'); list.innerHTML='';
+  const rem = loadReminders().sort((a,b)=>new Date(a.when) - new Date(b.when));
+  if(rem.length===0){ list.innerHTML='<div class="small muted">No reminders set.</div>'; return; }
+  rem.forEach((r, idx)=>{
+    const d = new Date(r.when);
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div><strong>${r.title}</strong><div class="small">${d.toLocaleString()}</div><div class="small">Remind ${r.before} min before</div></div>
+      <div class="inline"><button class="secondary" data-idx="${idx}" data-action="edit">Edit</button><button data-idx="${idx}" data-action="del">Delete</button></div>`;
+    list.appendChild(el);
+  });
+}
+
+document.getElementById('saveReminderBtn').addEventListener('click', ()=>{
+  const title = document.getElementById('tripTitle').value.trim();
+  const dt = document.getElementById('tripDate').value;
+  const before = parseInt(document.getElementById('remindBefore').value,10);
+  const status = document.getElementById('reminderStatus');
+  if(!title || !dt){ status.style.display='block'; status.className='status err'; status.textContent='Enter title and trip date.'; return; }
+  const when = new Date(dt).toISOString();
+  const arr = loadReminders();
+  arr.push({title, when, before});
+  saveReminders(arr);
+  status.style.display='block'; status.className='status ok'; status.textContent='Reminder saved.';
+  document.getElementById('tripTitle').value=''; document.getElementById('tripDate').value='';
+  setTimeout(()=>status.style.display='none',2500);
+});
+
+document.getElementById('reminderList').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const idx = parseInt(btn.dataset.idx,10);
+  const action = btn.dataset.action;
+  const arr = loadReminders();
+  if(action==='del'){ arr.splice(idx,1); saveReminders(arr); }
+  if(action==='edit'){
+    const r = arr[idx];
+    document.getElementById('tripTitle').value = r.title;
+    document.getElementById('tripDate').value = r.when.slice(0,16);
+    document.getElementById('remindBefore').value = r.before;
+    arr.splice(idx,1); saveReminders(arr);
+  }
+});
+
+/* Scheduling (simple): when page open, find next reminder and set timeout */
+let nextTimeout = null;
+function scheduleNextReminder(){
+  if(nextTimeout) { clearTimeout(nextTimeout); nextTimeout = null; }
+  const arr = loadReminders().map(r=>{
+    const when = new Date(r.when);
+    const notifyAt = new Date(when.getTime() - (r.before||5)*60000);
+    return {...r, notifyAt};
+  }).filter(r=>r.notifyAt > new Date()).sort((a,b)=>a.notifyAt-b.notifyAt);
+
+  const next = arr[0];
+  const nextEl = document.getElementById('nextAlarm');
+  if(!next){ nextEl.textContent = 'No upcoming alarms.'; return; }
+
+  const ms = next.notifyAt - new Date();
+  nextEl.textContent = `Next: "${next.title}" at ${next.notifyAt.toLocaleString()}`;
+  nextTimeout = setTimeout(()=> {
+    // show notification and in-page alert
+    if(Notification && Notification.permission === 'granted'){
+      new Notification('Trip Reminder', {body: `${next.title} — ${new Date(next.when).toLocaleString()}`});
+    } else {
+      alert(`Reminder: ${next.title} — ${new Date(next.when).toLocaleString()}`);
+    }
+    // remove the reminder or keep it (we keep it)
+    scheduleNextReminder(); // schedule following
+  }, ms);
+}
+
+/* ---------------------------
+   Calendar view (simple month)
+   --------------------------- */
+let calDate = new Date();
+function renderCalendar(){
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+  const monthLabel = document.getElementById('calMonth');
+  const year = calDate.getFullYear(), month = calDate.getMonth();
+  monthLabel.textContent = calDate.toLocaleString(undefined,{month:'long', year:'numeric'});
+
+  const first = new Date(year, month, 1);
+  const startDay = first.getDay(); // 0..6
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  // Render blank days for offset
+  for(let i=0;i<startDay;i++){ const cell = document.createElement('div'); cell.className='cal-day'; cell.style.opacity=.3; grid.appendChild(cell); }
+
+  const reminders = loadReminders();
+  for(let d=1; d<=daysInMonth; d++){
+    const cell = document.createElement('div'); cell.className='cal-day';
+    const date = new Date(year, month, d);
+    const dayRem = reminders.filter(r => new Date(r.when).toDateString() === date.toDateString());
+    cell.innerHTML = `<div style="font-weight:700">${d}</div>` + (dayRem.length ? `<div style="margin-top:6px"><span class="badge">${dayRem.length} rem</span></div>` : '');
+    cell.addEventListener('click', ()=> {
+      if(dayRem.length===0) alert('No reminders/events on this date.');
+      else alert(dayRem.map(rr=>`${rr.title} at ${new Date(rr.when).toLocaleTimeString()} (remind ${rr.before}m before)`).join('\\n'));
+    });
+    grid.appendChild(cell);
+  }
+}
+
+/* calendar controls */
+document.getElementById('prevMonth').addEventListener('click', ()=>{ calDate = new Date(calDate.getFullYear(), calDate.getMonth()-1, 1); renderCalendar(); });
+document.getElementById('nextMonth').addEventListener('click', ()=>{ calDate = new Date(calDate.getFullYear(), calDate.getMonth()+1, 1); renderCalendar(); });
+document.getElementById('showCalendarBtn').addEventListener('click', ()=> renderCalendar());
+
+/* ---------------------------
+   Reports (CRUD)
+   --------------------------- */
+function loadReports(){ return JSON.parse(localStorage.getItem(LS.reports) || '[]'); }
+function saveReports(r){ localStorage.setItem(LS.reports, JSON.stringify(r)); }
+
+document.getElementById('submitReportBtn').addEventListener('click', ()=>{
+  const type = document.getElementById('issueType').value;
+  const loc = document.getElementById('issueLocation').value.trim();
+  const details = document.getElementById('issueDetails').value.trim();
+  const status = document.getElementById('reportStatus');
+  if(!loc || !details){ status.style.display='block'; status.className='status err'; status.textContent='Enter location and details.'; return; }
+  const arr = loadReports();
+  const rec = {id:'REP'+Date.now(), type, loc, details, createdAt: new Date().toISOString(), status:'open'};
+  arr.push(rec); saveReports(arr);
+  status.style.display='block'; status.className='status ok'; status.textContent='Report submitted.';
+  setTimeout(()=>status.style.display='none',2000);
+});
+
+/* Admin open reports: simple popup table */
+document.getElementById('openReportsBtn').addEventListener('click', openReportsAdmin);
+document.getElementById('openReportsAdmin').addEventListener('click', openReportsAdmin);
+
+function openReportsAdmin(){
+  const arr = loadReports();
+  if(arr.length===0){ alert('No reports'); return; }
+  const rows = arr.map(r=>`ID:${r.id}\\nType:${r.type}\\nLoc:${r.loc}\\nDetails:${r.details}\\nStatus:${r.status}\\nCreated:${new Date(r.createdAt).toLocaleString()}`).join('\\n\\n---\\n\\n');
+  // For demo, show in prompt-like window; in app open admin page
+  const action = prompt(`Reports:\\n\\n${rows}\\n\\nType report ID to mark closed, or leave blank to close this window.`);
+  if(action){
+    const idx = arr.findIndex(x=>x.id===action.trim());
+    if(idx>=0){ arr[idx].status='closed'; saveReports(arr); alert('Report marked closed.'); }
+    else alert('ID not found.');
+  }
+}
+
+/* ---------------------------
+   Driver ratings
+   --------------------------- */
+function loadRatings(){ return JSON.parse(localStorage.getItem(LS.ratings) || '{}'); }
+function saveRatings(obj){ localStorage.setItem(LS.ratings, JSON.stringify(obj)); }
+
+document.getElementById('submitRatingBtn').addEventListener('click', ()=>{
+  const id = document.getElementById('rateDriverId').value.trim();
+  const val = parseInt(document.getElementById('rateValue').value,10);
+  const comment = document.getElementById('rateComment').value.trim();
+  const status = document.getElementById('ratingStatus');
+  if(!id){ status.style.display='block'; status.className='status err'; status.textContent='Enter driver ID.'; return; }
+  const ratings = loadRatings();
+  if(!ratings[id]) ratings[id]=[];
+  ratings[id].push({value:val, comment, at: new Date().toISOString()});
+  saveRatings(ratings);
+  status.style.display='block'; status.className='status ok'; status.textContent='Rating saved.';
+  setTimeout(()=>status.style.display='none',2000);
+});
+
+document.getElementById('viewDriverRatingsBtn').addEventListener('click', ()=>{
+  const id = document.getElementById('rateDriverId').value.trim();
+  if(!id){ alert('Enter driver ID to view ratings.'); return; }
+  const ratings = loadRatings()[id] || [];
+  if(ratings.length===0) alert('No ratings for this driver.');
+  else {
+    const txt = ratings.map(r=>`${r.value} ★ — ${r.comment || '-'} (${new Date(r.at).toLocaleString()})`).join('\\n');
+    alert(`Ratings for ${id}:\\n\\n${txt}\\n\\nAverage: ${ (ratings.reduce((s,x)=>s+x.value,0)/ratings.length).toFixed(2)} ★`);
+  }
+});
+
+/* ---------------------------
+   Classmates & groups
+   --------------------------- */
+function loadClassmates(){ return JSON.parse(localStorage.getItem(LS.classmates) || '[]'); }
+function saveClassmates(arr){ localStorage.setItem(LS.classmates, JSON.stringify(arr)); }
+
+document.getElementById('addClassmateBtn').addEventListener('click', ()=>{
+  const myId = document.getElementById('myStudentId').value.trim();
+  const cm = document.getElementById('classmateId').value.trim();
+  const st = document.getElementById('classmateStatus');
+  if(!myId || !cm){ st.style.display='block'; st.className='status err'; st.textContent='Enter your ID and classmate ID.'; return; }
+  const arr = loadClassmates();
+  arr.push({myId, cm, connected: true, at: new Date().toISOString()});
+  saveClassmates(arr);
+  st.style.display='block'; st.className='status ok'; st.textContent='Classmate added (simulated).';
+  setTimeout(()=>st.style.display='none',2000);
+  renderClassmateList();
+});
+
+document.getElementById('listClassmatesBtn').addEventListener('click', renderClassmateList);
+
+function renderClassmateList(){
+  const container = document.getElementById('classmateList'); container.innerHTML='';
+  const arr = loadClassmates();
+  if(arr.length===0){ container.innerHTML='<div class="small">No classmates connected.</div>'; return; }
+  arr.forEach((c,idx)=>{
+    const el = document.createElement('div'); el.className='item';
+    el.innerHTML = `<div><strong>${c.cm}</strong><div class="small">Connected: ${new Date(c.at).toLocaleString()}</div></div>
+      <div class="inline"><button data-idx="${idx}" class="secondary" data-action="request">Send Ride</button><button data-idx="${idx}" data-action="remove">Remove</button></div>`;
+    container.appendChild(el);
+  });
+}
+
+/* handle classmates actions */
+document.getElementById('classmateList').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  const idx = parseInt(btn.dataset.idx,10), action = btn.dataset.action;
+  const arr = loadClassmates();
+  if(action==='remove'){ arr.splice(idx,1); saveClassmates(arr); renderClassmateList(); }
+  if(action==='request'){ alert(`Ride request sent to ${arr[idx].cm} (simulated).`); }
+});
+
+/* Groups */
+function loadGroups(){ return JSON.parse(localStorage.getItem(LS.groups) || '[]'); }
+function saveGroups(g){ localStorage.setItem(LS.groups, JSON.stringify(g)); }
+
+document.getElementById('createGroupBtn').addEventListener('click', ()=>{
+  const major = document.getElementById('majorName').value.trim();
+  const myId = document.getElementById('myStudentId').value.trim();
+  const st = document.getElementById('classmateStatus');
+  if(!major || !myId){ st.style.display='block'; st.className='status err'; st.textContent='Enter major and your ID.'; return; }
+  const groups = loadGroups();
+  const id = 'G'+Date.now();
+  groups.push({id, major, owner: myId, members: [myId], status:'active', createdAt: new Date().toISOString()});
+  saveGroups(groups);
+  st.style.display='block'; st.className='status ok'; st.textContent=`Group "${major}" created.`;
+  setTimeout(()=>st.style.display='none',2000);
+});
+
+document.getElementById('joinGroupBtn').addEventListener('click', ()=>{
+  const major = document.getElementById('majorName').value.trim();
+  const myId = document.getElementById('myStudentId').value.trim();
+  const st = document.getElementById('classmateStatus');
+  if(!major || !myId){ st.style.display='block'; st.className='status err'; st.textContent='Enter major and your ID.'; return; }
+  const groups = loadGroups();
+  const g = groups.find(x=>x.major.toLowerCase()===major.toLowerCase());
+  if(!g){ st.style.display='block'; st.className='status err'; st.textContent='Group not found.'; return; }
+  if(!g.members.includes(myId)) g.members.push(myId);
+  saveGroups(groups);
+  st.style.display='block'; st.className='status ok'; st.textContent=`Joined group "${major}".`;
+  setTimeout(()=>st.style.display='none',2000);
+});
+
+document.getElementById('showGroupsBtn').addEventListener('click', ()=>{
+  const groups = loadGroups();
+  if(groups.length===0){ alert('No groups yet.'); return; }
+  const txt = groups.map(g=>`ID:${g.id} | ${g.major} | members:${g.members.length}`).join('\\n');
+  alert(txt);
+});
+
+document.getElementById('showGroupMembersBtn').addEventListener('click', ()=>{
+  const groups = loadGroups();
+  if(groups.length===0){ alert('No groups.'); return; }
+  const g = groups[0]; // demo: show first group or ask user
+  const sel = prompt('Enter group ID to view members:', groups[0].id);
+  if(!sel) return;
+  const found = groups.find(x=>x.id===sel);
+  if(!found) { alert('Group not found.'); return; }
+  alert(`Members of ${found.major}:\\n` + found.members.join('\\n'));
+});
+
+/* Admin group management */ 
+document.getElementById('openGroupsAdmin').addEventListener('click', ()=>{
+  const groups = loadGroups();
+  if(groups.length===0) return alert('No groups to manage.');
+  const rows = groups.map(g=>`ID:${g.id}\\nMajor:${g.major}\\nOwner:${g.owner}\\nMembers:${g.members.join(', ')}\\nStatus:${g.status}`).join('\\n\\n---\\n\\n');
+  const sel = prompt(`Groups:\\n\\n${rows}\\n\\nEnter Group ID to approve/reject (type 'delete' to remove)`) || '';
+  if(!sel) return;
+  const [gid,action] = sel.split(' ');
+  const idx = groups.findIndex(x=>x.id===gid);
+  if(idx===-1) return alert('Group ID not found.');
+  if(action==='delete'){ groups.splice(idx,1); saveGroups(groups); alert('Group deleted.'); }
+  else { groups[idx].status = groups[idx].status === 'active' ? 'suspended' : 'active'; saveGroups(groups); alert('Group status toggled.'); }
+});
+
+/* Admin ratings */ 
+document.getElementById('openRatingsAdmin').addEventListener('click', ()=>{
+  const ratings = loadRatings();
+  const keys = Object.keys(ratings);
+  if(keys.length===0) return alert('No ratings yet.');
+  const rows = keys.map(k=>`${k}: ${ratings[k].length} ratings, avg ${(ratings[k].reduce((s,x)=>s+x.value,0)/ratings[k].length).toFixed(2)} ★`).join('\\n');
+  alert(rows);
+});
+
+/* ---------------------------
+   Reports/Calendar initial render
+   --------------------------- */
+renderReminders();
+renderCalendar();
+scheduleNextReminder();
+
+/* ---------------------------
+   Utility
+   --------------------------- */
+function round2(x){ return Math.round(x*100)/100; }
+
+/* Simple load/initial helpers for local data */
+(function seedDemoData(){
+  // seed a demo group if none
+  if(!localStorage.getItem(LS.groups)){
+    localStorage.setItem(LS.groups, JSON.stringify([{id:'G100', major:'Computer Science', owner:'441111111', members:['441111111'], status:'active', createdAt:new Date().toISOString()}]));
+  }
+})();
+</script>
+</body>
+</html>
