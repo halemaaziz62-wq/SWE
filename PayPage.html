@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Page — Imam University Ride</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; background-color: #f4f7fb; color: #111;
+  }
+  header {
+    background-color: #0b2545; color: white;
+    padding: 14px 20px; text-align: center;
+  }
+  header h1 { margin:0; font-size:1.3rem; }
+  main { max-width: 600px; margin: 20px auto; }
+  .card { background: #fff; padding: 18px; border-radius: 12px; box-shadow: 0 6px 18px rgba(11,37,69,0.06); margin-bottom: 20px; }
+  label { display:block; margin-top:10px; color:#6b7280; font-size:0.9rem; }
+  input, select { width:100%; padding:10px; margin-top:5px; border-radius:8px; border:1px solid #e6edf6; }
+  button { margin-top:12px; padding:10px 15px; border:0; border-radius:8px; background:#0b2545; color:white; cursor:pointer; width:100%; font-weight:600; }
+  .status { margin-top:12px; padding:10px; border-radius:8px; font-weight:600; }
+  .status.success { background:#e6f4ea; color:#155724; }
+  .status.error { background:#fdecea; color:#721c24; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Imam University Ride Portal — Payment</h1>
+</header>
+
+<main>
+  <div class="card">
+    <label for="tripId">Trip ID / Reference</label>
+   <input type="text" id="tripId" >
+    <label for="fare">Fare (SAR)</label>
+     <input type="number" id="fare" step="0.01" >
+    <label for="paymentMethod">Payment Method</label>
+    <select id="paymentMethod">
+      <option value="card">Card</option>
+ <option value="Tabby">Tabby</option>
+      <option value="online">Online Wallet</option>
+      <option value="cash">Cash</option>
+    </select>
+
+    <label for="numRiders">Split with others?</label>
+    <input type="number" id="numRiders" min="1" value="1">
+
+    <button id="payBtn">Confirm Payment</button>
+    <div id="status" class="status" style="display:none;"></div>
+  </div>
+</main>
+
+<script>
+function round2(x){ return Math.round(x*100)/100; }
+
+document.getElementById('payBtn').addEventListener('click', ()=>{
+  const tripId = document.getElementById('tripId').value.trim();
+  const fare = parseFloat(document.getElementById('fare').value);
+  const method = document.getElementById('paymentMethod').value;
+  const numRiders = parseInt(document.getElementById('numRiders').value);
+
+  const statusEl = document.getElementById('status');
+
+  if(!tripId || isNaN(fare) || fare<=0 || numRiders<=0){
+    statusEl.style.display='block';
+    statusEl.className='status error';
+    statusEl.textContent='Please provide all information correctly';
+    return;
+  }
+
+ 
+  const perPerson = round2(fare/numRiders);
+
+ 
+  const paymentRecord = {tripId, fare, method, numRiders, perPerson, timestamp: new Date().toISOString()};
+  localStorage.setItem('payment_' + tripId, JSON.stringify(paymentRecord));
+
+  statusEl.style.display='block';
+  statusEl.className='status success';
+  statusEl.textContent=`Payment successful`;
+});
+</script>
+
+</body>
+</html>
