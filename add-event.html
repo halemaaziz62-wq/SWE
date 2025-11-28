@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Campus Event — Imam University</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin:0; background-color:#f4f7fb; color:#111;
+  }
+  header {
+    background-color:#0b2545; color:white;
+    padding:14px 20px; text-align:center;
+  }
+  header h1 { margin:0; font-size:1.3rem; }
+  main { max-width:600px; margin:20px auto; }
+  .card { background:#fff; padding:18px; border-radius:12px; box-shadow:0 6px 18px rgba(11,37,69,0.06); margin-bottom:20px; }
+  label { display:block; margin-top:10px; color:#6b7280; font-size:0.9rem; }
+  input, textarea { width:100%; padding:10px; margin-top:5px; border-radius:8px; border:1px solid #e6edf6; }
+  button { margin-top:12px; padding:10px 15px; border:0; border-radius:8px; background:#0b2545; color:white; cursor:pointer; width:100%; font-weight:600; }
+  button.secondary { background:#fff; color:#0b2545; border:1px solid #e6edf6; }
+  .status { margin-top:12px; padding:10px; border-radius:8px; font-weight:600; }
+  .status.success { background:#e6f4ea; color:#155724; }
+  .status.error { background:#fdecea; color:#721c24; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Imam University — Add Campus Event</h1>
+</header>
+
+<main>
+  <div class="card">
+    <label for="eventTitle">Event Title</label>
+    <input type="text" id="eventTitle" ">
+
+    <label for="eventStart">Start Date & Time</label>
+    <input type="datetime-local" id="eventStart">
+
+    
+    <label for="eventDesc">Description</label>
+    <textarea id="eventDesc" rows="4"></textarea>
+
+    <button id="saveEventBtn">Save Event</button>
+   
+
+    <div id="eventStatus" class="status" style="display:none;"></div>
+  </div>
+
+  <div class="card">
+    <h3>Saved Events (LocalStorage)</h3>
+    <ul id="eventList"></ul>
+  </div>
+</main>
+
+<script>
+function displayEvents(){
+  const listEl = document.getElementById('eventList');
+  listEl.innerHTML = '';
+  const events = JSON.parse(localStorage.getItem('campusEvents') || '[]');
+  events.forEach((ev, index)=>{
+    const li = document.createElement('li');
+    li.textContent = `${ev.title} | ${ev.start} ${ev.end ? 'to '+ev.end : ''}`;
+    const delBtn = document.createElement('button');
+    delBtn.textContent='Delete';
+    delBtn.style.marginLeft='8px';
+    delBtn.onclick = ()=>{
+      events.splice(index,1);
+      localStorage.setItem('campusEvents', JSON.stringify(events));
+      displayEvents();
+    };
+    li.appendChild(delBtn);
+    listEl.appendChild(li);
+  });
+}
+
+document.getElementById('saveEventBtn').addEventListener('click', ()=>{
+  const title = document.getElementById('eventTitle').value.trim();
+  const start = document.getElementById('eventStart').value;
+  const end = document.getElementById('eventEnd').value;
+  const desc = document.getElementById('eventDesc').value.trim();
+  const statusEl = document.getElementById('eventStatus');
+
+  if(!title || !start){
+    statusEl.style.display='block';
+    statusEl.className='status error';
+    statusEl.textContent='Please enter at least the address and start time';
+    return;
+  }
+
+  const events = JSON.parse(localStorage.getItem('campusEvents') || '[]');
+  events.push({title, start, end, desc});
+  localStorage.setItem('campusEvents', JSON.stringify(events));
+
+  statusEl.style.display='block';
+  statusEl.className='status success';
+  statusEl.textContent='The event has been saved successfully!';
+
+  // Reset inputs
+  document.getElementById('eventTitle').value='';
+  document.getElementById('eventStart').value='';
+  document.getElementById('eventEnd').value='';
+  document.getElementById('eventDesc').value='';
+
+  displayEvents();
+});
+
+document.getElementById('clearEventsBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('campusEvents');
+  displayEvents();
+  const statusEl = document.getElementById('eventStatus');
+  statusEl.style.display='block';
+  statusEl.className='status success';
+
+});
+
+displayEvents();
+</script>
+
+</body>
+</html>
