@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Events — Imam University</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin:0; background-color:#f4f7fb; color:#111;
+  }
+  header {
+    background-color:#0b2545; color:white;
+    padding:14px 20px; text-align:center;
+  }
+  header h1 { margin:0; font-size:1.3rem; }
+  main { max-width:700px; margin:20px auto; }
+  .card { background:#fff; padding:18px; border-radius:12px; box-shadow:0 6px 18px rgba(11,37,69,0.06); margin-bottom:20px; }
+  h2 { margin-top:0; color:#0b2545; }
+  .event-item { border-bottom:1px solid #e6edf6; padding:10px 0; display:flex; justify-content:space-between; align-items:center; }
+  .event-item:last-child { border-bottom:none; }
+  button { padding:6px 12px; border:0; border-radius:6px; cursor:pointer; background:#1366d6; color:white; font-weight:600; }
+  .status { margin-top:12px; padding:10px; border-radius:8px; font-weight:600; }
+  .status.success { background:#e6f4ea; color:#155724; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Student Events — Imam University</h1>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Available Events</h2>
+    <div id="studentEventsList"></div>
+    <div id="eventStatus" class="status" style="display:none;"></div>
+  </div>
+</main>
+
+<script>
+function displayStudentEvents(){
+  const container = document.getElementById('studentEventsList');
+  container.innerHTML = '';
+  const events = JSON.parse(localStorage.getItem('campusEvents') || '[]');
+
+  if(events.length===0){
+    container.textContent = 'No events available at the moment.';
+    return;
+  }
+
+  events.forEach((ev,index)=>{
+    const div = document.createElement('div');
+    div.className = 'event-item';
+    div.innerHTML = `
+      <div>
+        <strong>${ev.title}</strong><br>
+        <small>${ev.start}${ev.end ? ' to ' + ev.end : ''}</small><br>
+        <small>${ev.desc || '-'}</small>
+      </div>
+      <button>Register</button>
+    `;
+    const btn = div.querySelector('button');
+    btn.onclick = ()=>{
+      showStatus(`You have registered for "${ev.title}"`);
+    };
+    container.appendChild(div);
+  });
+}
+
+function showStatus(msg){
+  const statusEl = document.getElementById('eventStatus');
+  statusEl.style.display='block';
+  statusEl.className='status success';
+  statusEl.textContent=msg;
+  setTimeout(()=>{ statusEl.style.display='none'; }, 3000);
+}
+
+displayStudentEvents();
+</script>
+
+</body>
+</html>
